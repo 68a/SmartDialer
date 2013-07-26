@@ -86,6 +86,17 @@ void Connect()
 		(LPARAM)gszLogData);
 }
 
+void Disconnect()
+{
+	BYTE RasConnData[MAX_CONNECTIONS*sizeof(RASCONN)];
+	LPRASCONN pRasConn = (LPRASCONN) RasConnData;
+	if (GetCurrentConnections(RasConnData) > 0 ) {
+
+		pRasConn = (LPRASCONN)RasConnData;
+		Hangup(pRasConn->hrasconn);
+		DelRoute();
+	}
+}
 //
 //  FUNCTION: MyRegisterClass()
 //
@@ -174,7 +185,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	int wmId, wmEvent;
 
 	BYTE RasConnData[MAX_CONNECTIONS*sizeof(RASCONN)];
-	LPRASCONN pRasConn;
+
 	PHONE_ENTRY phoneEntries[MAX_PHONE_ENTRY];
 	int count = GetPhoneBookEntries(phoneEntries);
 
@@ -233,13 +244,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					ShowWindow(hWnd, SW_MAXIMIZE);
 					break;
 				case ID_DISCONNECT:
-					pRasConn = (LPRASCONN) RasConnData;
-					if (GetCurrentConnections(RasConnData) > 0 ) {
-						
-						pRasConn = (LPRASCONN)RasConnData;
-						Hangup(pRasConn->hrasconn);
-						DelRoute();
-					}
+					Disconnect();
 					break;
 				case ID_TRAYICON_CONNECT:
 					
@@ -260,6 +265,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_QUIT:
 			KillTimer(hWnd, 1);
 			AnimateIcon(hInst, hWnd, NIM_DELETE, m_nCounter);
+			Disconnect();
 			PostQuitMessage(0);
 			break;
 		case WM_TIMER:
