@@ -23,7 +23,7 @@ MENUITEMINFO	MenuItemInfo[MAX_PHONE_ENTRY];
 int				mDefaultMenuItem = 0;
 // Global Vraibles
 // Keep track of the last displayed icon
-int				nCounter; 
+int				nCounter = 0; 
 // List of Icon that is created and to be animated
 static int		IconResourceArray[NUM_ICON_FOR_ANIMATION] = {IDR_MAINFRAME, IDI_GRAY};
 // Current icon displayed index values.
@@ -317,6 +317,7 @@ void AnimateIcon(HINSTANCE hInstance, HWND hWnd, DWORD dwMsgType,UINT nIndexOfIc
 
 	NOTIFYICONDATA IconData;
 
+	memset(&IconData, 0, sizeof(NOTIFYICONDATA));
 	IconData.cbSize = sizeof(NOTIFYICONDATA);
 	IconData.hIcon  = hIconAtIndex;
 	IconData.hWnd   = hWnd;
